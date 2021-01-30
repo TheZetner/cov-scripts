@@ -1,4 +1,5 @@
 #!/bin/bash --login
+exec &> t-genes.log
 
 # translate-genes.sh <ALIGNED SEQUENCES>
 # requires seqkit and bedtools
@@ -6,12 +7,14 @@
 # bedtools getfasta to pull gene sequences from fasta files for translation
 # seqkit translate translate those gene sequences
 
-# head -n 2 NC_045512.2.gff3 > genes.gff3
-# grep "\sgene\s" NC_045512.2.gff3 >> genes.gff3
-# 
-# sed -i 's/gene\(.*\)Name\=\([^;]*\);\(.*\)/\2\1\3/g' genes.gff3
-# 
-# seqkit split --force -i -O split $1
+head -n 2 NC_045512.2.gff3 > genes.gff3
+grep "\sgene\s" NC_045512.2.gff3 >> genes.gff3
+
+sed -i 's/gene\(.*\)Name\=\([^;]*\);\(.*\)/\2\1\3/g' genes.gff3
+
+seqkit split --force -i -O split $1
+
+ulimit -s 65536
 
 for i in `ls split/*.fasta`;
    do ID=`grep ">" $i`;   
@@ -23,3 +26,8 @@ for i in `ls split/*.fasta`;
    seqkit translate $F.fna > $F.faa;   
 done
 
+cd $1
+mkdir fai faa fna
+mv *.fai fai/
+mv *.faa faa/
+mv *.fna fna/
