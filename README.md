@@ -19,3 +19,42 @@ Covid-19 Scripts
 ### Run
 
 `translate-genes.sh aligned.fasta`
+
+### Results
+
+Split folder with 4 subfolders
+- `faa`     - translated protein sequences for each gene
+- `fai`     - fasta indices for sequences (calculated by `bedtools getfasta`)
+- `fna`     - extracted nucleotide sequences
+- `seqs`    - original sequences split apart
+
+```
+split/
+├── faa
+│   ├── alignedwuhan.id_MN908947.3.faa
+│   ├── alignedwuhan.id_Wuhan__Hu-1__2019.faa
+│   └── alignedwuhan.id_Test__Sample.faa
+├── fai
+│   ├── alignedwuhan.id_MN908947.3.fasta.fai
+│   ├── alignedwuhan.id_Wuhan__Hu-1__2019.fasta.fai
+│   └── alignedwuhan.id_Test__Sample.fasta.fai
+├── fna
+│   ├── alignedwuhan.id_MN908947.3.fna
+│   ├── alignedwuhan.id_Wuhan__Hu-1__2019.fna
+│   └── alignedwuhan.id_Test__Sample.fna
+└── seqs
+    ├── alignedwuhan.id_MN908947.3.fasta
+    ├── alignedwuhan.id_Wuhan__Hu-1__2019.fasta
+    └── alignedwuhan.id_Test__Sample.fasta
+```
+
+### Parsing Results 
+
+```
+seqkit locate -m 1 -p "TNSSPDDQIGYYRRAT" split/faa/*
+
+seqID                           patternName             pattern                 strand  start   end     matched
+N::MN908947.3                   TNSSPDDQIGYYRRAT        TNSSPDDQIGYYRRAT        +       76      91      TNSSPDDQIGYYRRAT
+N::Wuhan/Hu-1/2019:28273-29533  TNSSPDDQIGYYRRAT        TNSSPDDQIGYYRRAT        +       76      91      TNSSPDDQIGYYRRAT
+N::Test/Sample:28273-29533      TNSSPDDQIGYYRRAT        TNSSPDDQIGYYRRAT        +       76      91      TNSSPDGQIGYYRRAT
+```
