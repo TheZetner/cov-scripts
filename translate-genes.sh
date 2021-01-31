@@ -16,18 +16,18 @@ seqkit split --force -i -O split $1
 
 ulimit -s 65536
 
-for i in `ls split/*.fasta`;
+cd split
+mkdir fai faa fna seqs
+
+for i in `ls *.fasta`;
    do ID=`grep ">" $i`;   
    F=${i%.*};
    sed -i "s|$ID|>NC_045512.2|g" $i; 
-   bedtools getfasta -name -rna -fullHeader -fi $i -fo $F.fna -bed genes.gff3;
+   bedtools getfasta -name -rna -fullHeader -fi $i -fo fna/$F.fna -bed ../genes.gff3;
    sed -i "s|>NC_045512.2|$ID|g" $i; 
-   sed -i "s|NC_045512.2|${ID//>}|g" $F.fna; 
-   seqkit translate $F.fna > $F.faa;   
+   sed -i "s|NC_045512.2|${ID//>}|g" fna/$F.fna; 
+   seqkit translate fna/$F.fna > faa/$F.faa;   
+   mv $i seqs/
 done
 
-cd $1
-mkdir fai faa fna
 mv *.fai fai/
-mv *.faa faa/
-mv *.fna fna/
